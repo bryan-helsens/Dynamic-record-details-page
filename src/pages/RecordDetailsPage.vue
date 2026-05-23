@@ -10,6 +10,7 @@ import ViewManager from '@/components/views/ViewManager.vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import type { View, RecordValues } from '@/types'
 import type AppToast from '@/components/common/AppToast.vue'
+import { downloadRecordHtml } from '@/utils/exportRecord'
 
 const route = useRoute()
 const router = useRouter()
@@ -167,18 +168,31 @@ function handleEditView(view: View) {
 
           <!-- View mode actions -->
           <template v-else>
-            <button
-              v-if="record && pimClass && activeView"
-              class="flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-              title="Edit record values"
-              @click="startEdit"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-              Edit
-            </button>
+            <template v-if="record && pimClass && activeView">
+              <button
+                class="flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                title="Edit record values"
+                @click="startEdit"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Edit
+              </button>
+
+              <button
+                class="flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                title="Export as HTML"
+                @click="downloadRecordHtml(record!, pimClass!, activeView!)"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Export
+              </button>
+            </template>
 
             <button
               class="p-2 text-blue-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
