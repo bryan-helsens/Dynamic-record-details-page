@@ -71,6 +71,7 @@ export interface View {
   name: string
   classId: number
   description?: string
+  isDefault?: boolean
   layout: LayoutItem[]
   columns?: number    // grid columns, default 12
   rowHeight?: number  // px per row unit, default 60

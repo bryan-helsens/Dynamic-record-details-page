@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, inject } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useClassStore } from '@/stores/classStore'
 import { useViewStore } from '@/stores/viewStore'
@@ -39,10 +39,16 @@ const rowHeight = ref(60)
 const hasUnsavedChanges = ref(false)
 const previewMode = ref(false)
 const showGridSettings = ref(false)
-// Tracks whether the view data is loaded so GridBuilder mounts only once with full data
 const builderKey = ref(0)
 
+// Undo / redo stacks (each entry is a deep copy of the layout)
+const undoStack = ref<LayoutItem[][]>([])
+const redoStack = ref<LayoutItem[][]>([])
+const canUndo = computed(() => undoStack.value.length > 0)
+const canRedo = computed(() => redoStack.value.length > 0)
+
 onMounted(async () => {
+  window.addEventListener('keydown', onKeydown)
   await Promise.all([
     classStore.fetchOne(classId.value),
     viewStore.fetchViewsForClass(classId.value),
@@ -76,10 +82,47 @@ watch(
 )
 
 function onLayoutChange(layout: LayoutItem[]) {
+  // Push current layout to undo stack before accepting the change
+  undoStack.value.push(currentLayout.value.map((i) => ({ ...i })))
+  if (undoStack.value.length > 50) undoStack.value.shift()
+  redoStack.value = []
+
   currentLayout.value = layout
   hasUnsavedChanges.value = true
   if (view.value) {
     viewStore.updateLayoutInMemory(view.value.id, layout)
+  }
+}
+
+function undo() {
+  if (!canUndo.value) return
+  redoStack.value.push(currentLayout.value.map((i) => ({ ...i })))
+  currentLayout.value = undoStack.value.pop()!
+  builderKey.value++
+  hasUnsavedChanges.value = true
+}
+
+function redo() {
+  if (!canRedo.value) return
+  undoStack.value.push(currentLayout.value.map((i) => ({ ...i })))
+  currentLayout.value = redoStack.value.pop()!
+  builderKey.value++
+  hasUnsavedChanges.value = true
+}
+
+function onKeydown(e: KeyboardEvent) {
+  const isTyping = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault()
+    save()
+  }
+  if (isTyping) return
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+    e.preventDefault()
+    undo()
+  } else if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+    e.preventDefault()
+    redo()
   }
 }
 
@@ -126,6 +169,10 @@ async function save() {
   }
 }
 
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onKeydown)
+})
+
 function goBack() {
   if (hasUnsavedChanges.value) {
     if (!confirm('You have unsaved changes. Discard them?')) return
@@ -168,6 +215,34 @@ function goBack() {
         </span>
 
         <div class="ml-auto flex items-center gap-2">
+          <!-- Undo / Redo -->
+          <div class="flex items-center gap-0.5">
+            <button
+              class="p-2 rounded-lg transition-colors"
+              :class="canUndo ? 'text-blue-300 hover:text-white hover:bg-white/10' : 'text-blue-800 cursor-not-allowed'"
+              :disabled="!canUndo"
+              title="Undo (Ctrl+Z)"
+              @click="undo"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+              </svg>
+            </button>
+            <button
+              class="p-2 rounded-lg transition-colors"
+              :class="canRedo ? 'text-blue-300 hover:text-white hover:bg-white/10' : 'text-blue-800 cursor-not-allowed'"
+              :disabled="!canRedo"
+              title="Redo (Ctrl+Y)"
+              @click="redo"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10H11a8 8 0 00-8 8v2m18-10l-6 6m6-6l-6-6" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="h-5 w-px bg-blue-800" />
+
           <!-- Grid settings -->
           <button
             class="flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"

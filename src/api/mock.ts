@@ -91,6 +91,7 @@ const VIEWS: View[] = [
     id: 5,
     name: 'Marketing View',
     classId: 1,
+    isDefault: true,
     description: 'For the marketing team',
     columns: 12,
     rowHeight: 70,
@@ -184,6 +185,12 @@ export const mockViewsApi = {
   delete: (id: number) => {
     const idx = VIEWS.findIndex((v) => v.id === id)
     if (idx >= 0) VIEWS.splice(idx, 1)
+    return delay(undefined)
+  },
+  setDefault: (classId: number, viewId: number) => {
+    VIEWS.forEach((v) => {
+      if (v.classId === classId) v.isDefault = v.id === viewId
+    })
     return delay(undefined)
   },
   duplicate: (id: number, name: string) => {

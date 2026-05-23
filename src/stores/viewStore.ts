@@ -32,9 +32,10 @@ export const useViewStore = defineStore('view', () => {
       // merge without duplicates
       const ids = new Set(fetched.map((v) => v.id))
       views.value = [...views.value.filter((v) => !ids.has(v.id)), ...fetched]
-      // restore or pick first view for this class
+      // Prefer the stored active view, then the default view, then the first
       if (activeViewId.value === null || !fetched.find((v) => v.id === activeViewId.value)) {
-        setActiveView(fetched[0]?.id ?? null)
+        const defaultView = fetched.find((v) => v.isDefault) ?? fetched[0]
+        setActiveView(defaultView?.id ?? null)
       }
     } catch (e) {
       error.value = (e as Error).message
@@ -104,7 +105,18 @@ export const useViewStore = defineStore('view', () => {
     }
   }
 
-  /** Optimistically update layout in memory (before save) */
+  async function setDefaultView(classId: number, viewId: number) {
+    error.value = null
+    try {
+      await viewsApi.setDefault(classId, viewId)
+      views.value = views.value.map((v) =>
+        v.classId === classId ? { ...v, isDefault: v.id === viewId } : v,
+      )
+    } catch (e) {
+      error.value = (e as Error).message
+    }
+  }
+
   function updateLayoutInMemory(viewId: number, layout: LayoutItem[]) {
     const view = views.value.find((v) => v.id === viewId)
     if (view) view.layout = layout
@@ -124,6 +136,7 @@ export const useViewStore = defineStore('view', () => {
     saveView,
     deleteView,
     duplicateView,
+    setDefaultView,
     updateLayoutInMemory,
   }
 })

@@ -6,6 +6,7 @@ import { recordsApi } from '@/api'
 export const useRecordStore = defineStore('record', () => {
   const records = ref<Map<number, PimRecord>>(new Map())
   const loading = ref(false)
+  const saving = ref(false)
   const error = ref<string | null>(null)
 
   const getById = computed(() => (id: number) => records.value.get(id))
@@ -26,6 +27,7 @@ export const useRecordStore = defineStore('record', () => {
   }
 
   async function updateRecord(id: number, values: Record<string, unknown>) {
+    saving.value = true
     error.value = null
     try {
       const updated = await recordsApi.update(id, values)
@@ -34,8 +36,10 @@ export const useRecordStore = defineStore('record', () => {
     } catch (e) {
       error.value = (e as Error).message
       return null
+    } finally {
+      saving.value = false
     }
   }
 
-  return { records, loading, error, getById, fetchRecord, updateRecord }
+  return { records, loading, saving, error, getById, fetchRecord, updateRecord }
 })

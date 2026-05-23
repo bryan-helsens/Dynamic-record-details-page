@@ -1,11 +1,4 @@
 <script setup lang="ts">
-/**
- * Read-only view renderer using CSS Grid.
- * Mirrors the GridStack coordinate system exactly:
- *   - grid-template-columns: N equal columns
- *   - grid-template-rows: explicit fixed-height rows so y positions are respected
- *   - Each item placed via grid-column / grid-row spanning
- */
 import { computed } from 'vue'
 import type { View, PimClass, RecordValues } from '@/types'
 import GridWidget from './GridWidget.vue'
@@ -14,6 +7,11 @@ const props = defineProps<{
   view: View
   pimClass: PimClass
   values: RecordValues
+  editable?: boolean
+}>()
+
+const emit = defineEmits<{
+  (e: 'update:fieldValue', payload: { fieldId: number; value: unknown }): void
 }>()
 
 const columns = computed(() => props.view.columns ?? 12)
@@ -62,6 +60,8 @@ const gridStyle = computed(() => ({
         :layout-item="item"
         :value="values[String(item.fieldId)]"
         :edit-mode="false"
+        :record-editable="editable"
+        @update:value="emit('update:fieldValue', $event)"
       />
     </div>
   </div>

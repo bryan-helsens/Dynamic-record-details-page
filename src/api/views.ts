@@ -19,4 +19,7 @@ export const viewsApi = {
 
   duplicate: (id: number, name: string): Promise<View> =>
     client.post<View>(`/views/${id}/duplicate`, { name }).then((r) => r.data),
+
+  setDefault: (classId: number, viewId: number): Promise<void> =>
+    client.post(`/classes/${classId}/views/${viewId}/default`).then(() => undefined),
 }
