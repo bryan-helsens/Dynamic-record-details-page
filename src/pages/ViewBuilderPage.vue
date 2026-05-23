@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, inject } from 'vue'
+import { ref, computed, onMounted, watch, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useClassStore } from '@/stores/classStore'
 import { useViewStore } from '@/stores/viewStore'
@@ -9,6 +9,7 @@ import GridViewer from '@/components/grid/GridViewer.vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import type { LayoutItem } from '@/types'
 import type AppToast from '@/components/common/AppToast.vue'
+import { recordsApi } from '@/api'
 
 const route = useRoute()
 const router = useRouter()
@@ -38,21 +39,41 @@ const rowHeight = ref(60)
 const hasUnsavedChanges = ref(false)
 const previewMode = ref(false)
 const showGridSettings = ref(false)
+// Tracks whether the view data is loaded so GridBuilder mounts only once with full data
+const builderKey = ref(0)
 
 onMounted(async () => {
-  await classStore.fetchOne(classId.value)
-  await viewStore.fetchViewsForClass(classId.value)
-
-  if (view.value) {
-    viewName.value = view.value.name
-    viewDescription.value = view.value.description ?? ''
-    currentLayout.value = view.value.layout.map((l) => ({ ...l }))
-    columns.value = view.value.columns ?? 12
-    rowHeight.value = view.value.rowHeight ?? 60
-  } else {
-    viewName.value = 'New View'
-  }
+  await Promise.all([
+    classStore.fetchOne(classId.value),
+    viewStore.fetchViewsForClass(classId.value),
+    // Load first record of this class so the builder can show real preview values
+    recordsApi.listByClass(classId.value).then((records) => {
+      records.forEach((r) => recordStore.records.set(r.id, r))
+    }).catch(() => { /* preview values are optional */ }),
+  ])
 })
+
+// Sync form state whenever the resolved view changes (handles async load)
+watch(
+  view,
+  (newView) => {
+    if (newView) {
+      viewName.value = newView.name
+      viewDescription.value = newView.description ?? ''
+      // Only overwrite layout if we haven't made local edits yet
+      if (!hasUnsavedChanges.value) {
+        currentLayout.value = newView.layout.map((l) => ({ ...l }))
+        columns.value = newView.columns ?? 12
+        rowHeight.value = newView.rowHeight ?? 60
+      }
+      // Bump the key so GridBuilder re-mounts with the full populated layout
+      builderKey.value++
+    } else if (isNew.value) {
+      viewName.value = 'New View'
+    }
+  },
+  { immediate: true },
+)
 
 function onLayoutChange(layout: LayoutItem[]) {
   currentLayout.value = layout
@@ -252,6 +273,7 @@ function goBack() {
       <div v-else class="max-w-screen-xl mx-auto px-4 sm:px-6 py-6 h-full">
         <GridBuilder
           v-if="!previewMode"
+          :key="builderKey"
           :view="{
             id: view?.id ?? 0,
             name: viewName,

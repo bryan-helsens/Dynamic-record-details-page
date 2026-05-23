@@ -54,23 +54,26 @@ function handleEditView(view: View) {
 </script>
 
 <template>
-  <div class="record-details-page min-h-screen bg-gray-100">
+  <div class="record-details-page min-h-screen bg-gray-50">
 
     <!-- Header -->
-    <header class="sticky top-0 z-20 bg-white border-b border-gray-200 shadow-sm">
-      <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center gap-4">
-        <!-- Breadcrumb -->
+    <header class="sticky top-0 z-20 bg-white border-b border-gray-200">
+      <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center gap-3">
+        <!-- Back + breadcrumb -->
+        <router-link to="/" class="text-gray-400 hover:text-gray-700 transition-colors flex-shrink-0 mr-1">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </router-link>
         <nav class="flex items-center gap-1.5 text-sm text-gray-500 min-w-0">
-          <router-link to="/" class="hover:text-gray-900 transition-colors flex-shrink-0">Home</router-link>
-          <span>/</span>
           <span class="text-gray-400 flex-shrink-0">{{ pimClass?.name ?? '…' }}</span>
-          <span>/</span>
-          <span class="text-gray-900 font-medium truncate">
+          <span class="text-gray-300">/</span>
+          <span class="text-gray-800 font-semibold truncate">
             {{ record?.values[String(pimClass?.fields[0]?.id)] ?? `Record #${recordId}` }}
           </span>
         </nav>
 
-        <div class="ml-auto flex items-center gap-3">
+        <div class="ml-auto flex items-center gap-2">
           <!-- View selector -->
           <ViewSelector
             v-if="pimClass"
@@ -80,7 +83,7 @@ function handleEditView(view: View) {
 
           <!-- Manage views -->
           <button
-            class="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            class="p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
             title="Manage views"
             @click="showViewManager = true"
           >
@@ -88,19 +91,18 @@ function handleEditView(view: View) {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
             </svg>
-            <span class="hidden sm:inline">Views</span>
           </button>
 
-          <!-- Build new layout -->
+          <!-- New view -->
           <button
             v-if="pimClass"
-            class="flex items-center gap-1.5 px-3 py-2 bg-brand-600 text-white text-sm rounded-lg hover:bg-brand-700 transition-colors"
+            class="flex items-center gap-1.5 px-3 py-1.5 bg-brand-600 text-white text-sm rounded-lg hover:bg-brand-700 transition-colors font-medium"
             @click="goToBuilder()"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
-            <span class="hidden sm:inline">New View</span>
+            New View
           </button>
         </div>
       </div>
@@ -139,15 +141,7 @@ function handleEditView(view: View) {
     </div>
 
     <!-- Record content -->
-    <main v-else-if="record && pimClass && activeView" class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <!-- View title -->
-      <div class="flex items-center gap-3 mb-6">
-        <h1 class="text-lg font-semibold text-gray-900">
-          {{ record.values[String(pimClass.fields[0]?.id)] ?? `Record #${record.id}` }}
-        </h1>
-        <span class="text-xs px-2 py-1 bg-gray-100 text-gray-500 rounded-full">{{ activeView.name }}</span>
-      </div>
-
+    <main v-else-if="record && pimClass && activeView" class="max-w-screen-xl mx-auto px-5 sm:px-7 lg:px-10 py-7">
       <GridViewer
         :view="activeView"
         :pim-class="pimClass"

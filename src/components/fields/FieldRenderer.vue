@@ -54,7 +54,7 @@ const fontSizeClass = computed(() => {
   <div class="field-renderer h-full flex" :class="[labelPositionClass, fontSizeClass]">
     <label
       v-if="displayOptions?.labelPosition !== 'hidden' && (displayOptions?.showLabel !== false)"
-      class="field-label text-xs font-semibold uppercase tracking-wider text-gray-500 flex-shrink-0"
+      class="field-label text-[11px] font-semibold uppercase tracking-widest text-gray-400 flex-shrink-0 leading-none mb-0.5"
     >
       {{ field.name }}
     </label>

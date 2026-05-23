@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { Field, LayoutItem } from '@/types'
 import FieldRenderer from '@/components/fields/FieldRenderer.vue'
 
@@ -13,20 +14,29 @@ const emit = defineEmits<{
   (e: 'remove', fieldId: number): void
   (e: 'configure', fieldId: number): void
 }>()
+
+const variant = computed(() => props.layoutItem.displayOptions?.variant ?? 'default')
+
+const variantClass = computed(() => ({
+  'default':   'bg-white border border-gray-200 shadow-sm',
+  'card':      'bg-white border border-gray-200 shadow-md',
+  'highlight': 'bg-brand-50 border border-brand-200 shadow-sm',
+  'minimal':   'bg-transparent border-0 shadow-none',
+}[variant.value]))
 </script>
 
 <template>
   <div
-    class="grid-widget h-full flex flex-col bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden"
-    :class="{ 'ring-2 ring-brand-300 ring-offset-1': editMode }"
+    class="grid-widget h-full flex flex-col rounded-xl overflow-hidden transition-shadow"
+    :class="[variantClass, editMode ? 'ring-2 ring-brand-300 ring-offset-1 hover:shadow-md' : '']"
   >
-    <!-- Edit mode toolbar -->
+    <!-- Edit mode drag handle toolbar -->
     <div
       v-if="editMode"
-      class="widget-toolbar flex items-center justify-between px-3 py-1.5 bg-gray-50 border-b border-gray-200 cursor-grab active:cursor-grabbing"
+      class="widget-toolbar flex items-center justify-between px-3 py-1.5 bg-gray-50 border-b border-gray-200 cursor-grab active:cursor-grabbing select-none"
     >
-      <span class="text-xs font-medium text-gray-600 truncate">{{ field.name }}</span>
-      <div class="flex items-center gap-1 flex-shrink-0">
+      <span class="text-xs font-medium text-gray-500 truncate">{{ field.name }}</span>
+      <div class="flex items-center gap-0.5 flex-shrink-0">
         <button
           class="p-1 hover:bg-gray-200 rounded text-gray-400 hover:text-gray-700 transition-colors"
           title="Configure widget"
@@ -51,7 +61,10 @@ const emit = defineEmits<{
     </div>
 
     <!-- Content -->
-    <div class="widget-content flex-1 min-h-0 p-3 overflow-hidden">
+    <div
+      class="widget-content flex-1 min-h-0 overflow-hidden"
+      :class="field.type === 'image' ? 'p-0' : 'px-4 py-3'"
+    >
       <FieldRenderer
         :field="field"
         :value="value"
