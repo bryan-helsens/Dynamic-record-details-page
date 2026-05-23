@@ -26,11 +26,11 @@ function apply() {
 </script>
 
 <template>
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm" @click.self="emit('close')">
-    <div class="bg-white rounded-xl shadow-xl w-80 border border-gray-200">
-      <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-        <h3 class="font-semibold text-gray-900">Configure: {{ field.name }}</h3>
-        <button class="text-gray-400 hover:text-gray-700" @click="emit('close')">
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" @click.self="emit('close')">
+    <div class="bg-white rounded-xl shadow-xl w-80 border border-blue-100">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-blue-50">
+        <h3 class="font-semibold text-ink">Configure: {{ field.name }}</h3>
+        <button class="text-ink-subtle hover:text-ink transition-colors" @click="emit('close')">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -39,15 +39,15 @@ function apply() {
 
       <div class="px-5 py-4 space-y-4">
         <label class="flex items-center gap-3 cursor-pointer">
-          <input v-model="options.showLabel" type="checkbox" class="w-4 h-4 rounded border-gray-300 text-brand-600" />
-          <span class="text-sm text-gray-700">Show field label</span>
+          <input v-model="options.showLabel" type="checkbox" class="w-4 h-4 rounded border-blue-200 text-blue-600" />
+          <span class="text-sm text-ink-light">Show field label</span>
         </label>
 
         <div>
-          <label class="block text-xs font-medium text-gray-600 mb-1.5">Label position</label>
+          <label class="block text-xs font-medium text-ink-muted mb-1.5">Label position</label>
           <select
             v-model="options.labelPosition"
-            class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+            class="w-full rounded-lg border border-blue-200 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="top">Top</option>
             <option value="left">Left (inline)</option>
@@ -56,15 +56,15 @@ function apply() {
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-gray-600 mb-1.5">Font size</label>
+          <label class="block text-xs font-medium text-ink-muted mb-1.5">Font size</label>
           <div class="grid grid-cols-4 gap-1">
             <button
               v-for="size in ['sm', 'md', 'lg', 'xl']"
               :key="size"
               class="py-1.5 rounded text-xs border transition-colors"
               :class="options.fontSize === size
-                ? 'bg-brand-600 text-white border-brand-600'
-                : 'border-gray-300 text-gray-600 hover:border-brand-400'"
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'border-blue-200 text-ink-muted hover:border-blue-400'"
               @click="options.fontSize = size as WidgetDisplayOptions['fontSize']"
             >
               {{ size.toUpperCase() }}
@@ -73,15 +73,15 @@ function apply() {
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-gray-600 mb-1.5">Variant</label>
+          <label class="block text-xs font-medium text-ink-muted mb-1.5">Variant</label>
           <div class="grid grid-cols-2 gap-1.5">
             <button
               v-for="variant in ['default', 'card', 'highlight', 'minimal']"
               :key="variant"
               class="py-1.5 px-2 rounded text-xs border transition-colors capitalize"
               :class="options.variant === variant
-                ? 'bg-brand-600 text-white border-brand-600'
-                : 'border-gray-300 text-gray-600 hover:border-brand-400'"
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'border-blue-200 text-ink-muted hover:border-blue-400'"
               @click="options.variant = variant as WidgetDisplayOptions['variant']"
             >
               {{ variant }}
@@ -90,15 +90,15 @@ function apply() {
         </div>
       </div>
 
-      <div class="flex justify-end gap-2 px-5 py-4 border-t border-gray-100">
+      <div class="flex justify-end gap-2 px-5 py-4 border-t border-blue-50">
         <button
-          class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+          class="px-4 py-2 text-sm text-ink-muted hover:text-ink transition-colors"
           @click="emit('close')"
         >
           Cancel
         </button>
         <button
-          class="px-4 py-2 bg-brand-600 text-white text-sm rounded-lg hover:bg-brand-700 transition-colors"
+          class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-500 transition-colors"
           @click="apply"
         >
           Apply

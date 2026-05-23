@@ -135,13 +135,13 @@ function goBack() {
 </script>
 
 <template>
-  <div class="view-builder-page min-h-screen bg-gray-100 flex flex-col">
+  <div class="view-builder-page min-h-screen bg-surface-page flex flex-col">
 
     <!-- Builder Header -->
-    <header class="flex-shrink-0 bg-white border-b border-gray-200 shadow-sm z-20">
+    <header class="flex-shrink-0 bg-ink border-b border-ink-light shadow-sm z-20">
       <div class="h-14 px-4 flex items-center gap-4">
         <button
-          class="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+          class="flex items-center gap-1.5 text-sm text-blue-300 hover:text-white transition-colors"
           @click="goBack"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -150,19 +150,19 @@ function goBack() {
           Back
         </button>
 
-        <div class="h-5 w-px bg-gray-200" />
+        <div class="h-5 w-px bg-blue-800" />
 
         <!-- View name inline edit -->
         <input
           v-model="viewName"
           type="text"
-          class="text-base font-semibold text-gray-900 bg-transparent border-0 border-b border-transparent hover:border-gray-300 focus:border-brand-500 focus:outline-none px-1 py-0.5 transition-colors"
+          class="text-base font-semibold text-white bg-transparent border-0 border-b border-transparent hover:border-blue-700 focus:border-blue-500 focus:outline-none px-1 py-0.5 transition-colors placeholder:text-blue-700"
           placeholder="View name…"
         />
 
         <span
           v-if="hasUnsavedChanges"
-          class="text-xs text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded-full border border-yellow-200"
+          class="text-xs text-yellow-400 bg-yellow-900/40 px-2 py-0.5 rounded-full border border-yellow-700"
         >
           Unsaved
         </span>
@@ -170,7 +170,7 @@ function goBack() {
         <div class="ml-auto flex items-center gap-2">
           <!-- Grid settings -->
           <button
-            class="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            class="flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
             @click="showGridSettings = !showGridSettings"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -184,7 +184,7 @@ function goBack() {
           <!-- Preview toggle -->
           <button
             class="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors"
-            :class="previewMode ? 'bg-brand-100 text-brand-700' : 'text-gray-600 hover:bg-gray-100'"
+            :class="previewMode ? 'bg-blue-600 text-white' : 'text-blue-300 hover:text-white hover:bg-white/10'"
             @click="previewMode = !previewMode"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -196,7 +196,7 @@ function goBack() {
 
           <!-- Save -->
           <button
-            class="flex items-center gap-1.5 px-4 py-1.5 bg-brand-600 text-white text-sm rounded-lg hover:bg-brand-700 disabled:opacity-60 transition-colors font-medium"
+            class="flex items-center gap-1.5 px-4 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-500 disabled:opacity-60 transition-colors font-medium"
             :disabled="viewStore.saving"
             @click="save"
           >
@@ -221,12 +221,12 @@ function goBack() {
         leave-from-class="opacity-100 translate-y-0"
         leave-to-class="opacity-0 -translate-y-2"
       >
-        <div v-if="showGridSettings" class="border-t border-gray-100 px-4 py-3 bg-gray-50 flex items-center gap-6 text-sm">
+        <div v-if="showGridSettings" class="border-t border-ink-light px-4 py-3 bg-ink-light flex items-center gap-6 text-sm">
           <div class="flex items-center gap-2">
-            <label class="text-gray-600 text-xs font-medium">Columns</label>
+            <label class="text-blue-300 text-xs font-medium">Columns</label>
             <select
               v-model.number="columns"
-              class="border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-brand-500"
+              class="border border-blue-800 bg-ink rounded px-2 py-1 text-sm text-white focus:ring-2 focus:ring-blue-500"
               @change="hasUnsavedChanges = true"
             >
               <option value="6">6 columns</option>
@@ -235,24 +235,24 @@ function goBack() {
             </select>
           </div>
           <div class="flex items-center gap-2">
-            <label class="text-gray-600 text-xs font-medium">Row height (px)</label>
+            <label class="text-blue-300 text-xs font-medium">Row height (px)</label>
             <input
               v-model.number="rowHeight"
               type="number"
               min="30"
               max="200"
               step="10"
-              class="w-20 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-brand-500"
+              class="w-20 border border-blue-800 bg-ink rounded px-2 py-1 text-sm text-white focus:ring-2 focus:ring-blue-500"
               @change="hasUnsavedChanges = true"
             />
           </div>
           <div class="flex items-center gap-2">
-            <label class="text-gray-600 text-xs font-medium">Description</label>
+            <label class="text-blue-300 text-xs font-medium">Description</label>
             <input
               v-model="viewDescription"
               type="text"
               placeholder="Optional…"
-              class="w-48 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-brand-500"
+              class="w-48 border border-blue-800 bg-ink rounded px-2 py-1 text-sm text-white placeholder:text-blue-800 focus:ring-2 focus:ring-blue-500"
               @input="hasUnsavedChanges = true"
             />
           </div>
@@ -260,13 +260,16 @@ function goBack() {
       </Transition>
     </header>
 
+    <!-- Blue accent line -->
+    <div class="h-0.5 bg-blue-600 flex-shrink-0" />
+
     <!-- Main builder area -->
     <div class="flex-1 overflow-auto">
       <div v-if="classStore.loading || viewStore.loading" class="flex items-center justify-center h-64">
         <LoadingSpinner label="Loading…" />
       </div>
 
-      <div v-else-if="!pimClass" class="flex items-center justify-center h-64 text-gray-400 text-sm">
+      <div v-else-if="!pimClass" class="flex items-center justify-center h-64 text-ink-subtle text-sm">
         Class not found
       </div>
 

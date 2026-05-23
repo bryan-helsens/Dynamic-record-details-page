@@ -41,11 +41,11 @@ async function duplicateView(view: View) {
 </script>
 
 <template>
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm" @click.self="emit('close')">
-    <div class="bg-white rounded-xl shadow-xl w-[480px] border border-gray-200">
-      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-        <h2 class="text-lg font-semibold text-gray-900">Manage Views</h2>
-        <button class="text-gray-400 hover:text-gray-700" @click="emit('close')">
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" @click.self="emit('close')">
+    <div class="bg-white rounded-xl shadow-xl w-[480px] border border-blue-100">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-blue-50">
+        <h2 class="text-lg font-semibold text-ink">Manage Views</h2>
+        <button class="text-ink-subtle hover:text-ink transition-colors" @click="emit('close')">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -53,18 +53,18 @@ async function duplicateView(view: View) {
       </div>
 
       <!-- Create new view -->
-      <div class="px-6 py-4 border-b border-gray-100">
-        <label class="block text-xs font-medium text-gray-600 mb-1.5">Create new view</label>
+      <div class="px-6 py-4 border-b border-blue-50">
+        <label class="block text-xs font-medium text-ink-muted mb-1.5">Create new view</label>
         <div class="flex gap-2">
           <input
             v-model="newViewName"
             type="text"
             placeholder="View name…"
-            class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+            class="flex-1 rounded-lg border border-blue-200 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             @keyup.enter="createView"
           />
           <button
-            class="px-4 py-2 bg-brand-600 text-white text-sm rounded-lg hover:bg-brand-700 disabled:opacity-50 transition-colors"
+            class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-500 disabled:opacity-50 transition-colors"
             :disabled="!newViewName.trim() || creating"
             @click="createView"
           >
@@ -74,23 +74,23 @@ async function duplicateView(view: View) {
       </div>
 
       <!-- Existing views -->
-      <div class="max-h-72 overflow-y-auto divide-y divide-gray-100">
-        <div v-if="views.length === 0" class="px-6 py-8 text-center text-sm text-gray-400">
+      <div class="max-h-72 overflow-y-auto divide-y divide-blue-50">
+        <div v-if="views.length === 0" class="px-6 py-8 text-center text-sm text-ink-subtle">
           No views yet. Create your first view above.
         </div>
 
         <div
           v-for="view in views"
           :key="view.id"
-          class="flex items-center gap-3 px-6 py-3 hover:bg-gray-50 group transition-colors"
+          class="flex items-center gap-3 px-6 py-3 hover:bg-blue-50 group transition-colors"
         >
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-gray-900 truncate">{{ view.name }}</p>
-            <p class="text-xs text-gray-400">{{ view.layout.length }} field{{ view.layout.length !== 1 ? 's' : '' }}</p>
+            <p class="text-sm font-medium text-ink truncate">{{ view.name }}</p>
+            <p class="text-xs text-ink-subtle">{{ view.layout.length }} field{{ view.layout.length !== 1 ? 's' : '' }}</p>
           </div>
           <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
-              class="p-1.5 hover:bg-gray-200 rounded text-gray-500 hover:text-gray-900 transition-colors"
+              class="p-1.5 hover:bg-blue-100 rounded text-ink-muted hover:text-ink transition-colors"
               title="Edit layout"
               @click="emit('edit', view)"
             >
@@ -100,7 +100,7 @@ async function duplicateView(view: View) {
               </svg>
             </button>
             <button
-              class="p-1.5 hover:bg-gray-200 rounded text-gray-500 hover:text-gray-900 transition-colors"
+              class="p-1.5 hover:bg-blue-100 rounded text-ink-muted hover:text-ink transition-colors"
               title="Duplicate"
               @click="duplicateView(view)"
             >
@@ -110,7 +110,7 @@ async function duplicateView(view: View) {
               </svg>
             </button>
             <button
-              class="p-1.5 hover:bg-red-100 rounded text-gray-500 hover:text-red-600 transition-colors"
+              class="p-1.5 hover:bg-red-100 rounded text-ink-muted hover:text-red-600 transition-colors"
               :disabled="deletingId === view.id"
               title="Delete"
               @click="deleteView(view.id)"
@@ -124,9 +124,9 @@ async function duplicateView(view: View) {
         </div>
       </div>
 
-      <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
+      <div class="px-6 py-4 border-t border-blue-50 flex justify-end">
         <button
-          class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+          class="px-4 py-2 text-sm text-ink-muted hover:text-ink transition-colors"
           @click="emit('close')"
         >
           Done

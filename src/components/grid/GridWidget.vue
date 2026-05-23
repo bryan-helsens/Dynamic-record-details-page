@@ -21,27 +21,27 @@ const showLabel = computed(() => props.layoutItem.displayOptions?.showLabel !== 
 const labelPosition = computed(() => props.layoutItem.displayOptions?.labelPosition ?? 'top')
 
 const variantClass = computed(() => ({
-  default:   'bg-white border border-gray-200 shadow-sm',
-  card:      'bg-white border border-gray-200 shadow-md',
-  highlight: 'bg-brand-50 border border-brand-200 shadow-sm',
+  default:   'bg-white border border-blue-100 shadow-sm',
+  card:      'bg-white border border-blue-100 shadow-md',
+  highlight: 'bg-blue-50 border border-blue-200 shadow-sm',
   minimal:   'bg-transparent border-0 shadow-none',
-}[variant.value] ?? 'bg-white border border-gray-200 shadow-sm'))
+}[variant.value] ?? 'bg-white border border-blue-100 shadow-sm'))
 </script>
 
 <template>
   <div
     class="grid-widget h-full flex flex-col rounded-xl overflow-hidden transition-shadow"
-    :class="[variantClass, editMode ? 'ring-2 ring-brand-300 ring-offset-1 hover:shadow-md' : '']"
+    :class="[variantClass, editMode ? 'ring-2 ring-blue-300 ring-offset-1 hover:shadow-md' : '']"
   >
     <!-- Edit mode drag handle -->
     <div
       v-if="editMode"
-      class="widget-toolbar flex-shrink-0 flex items-center justify-between px-3 py-1.5 bg-gray-50 border-b border-gray-200 cursor-grab active:cursor-grabbing select-none"
+      class="widget-toolbar flex-shrink-0 flex items-center justify-between px-3 py-1.5 bg-surface-sunken border-b border-blue-100 cursor-grab active:cursor-grabbing select-none"
     >
-      <span class="text-xs font-medium text-gray-500 truncate min-w-0 pr-2">{{ field.name }}</span>
+      <span class="text-xs font-medium text-ink-muted truncate min-w-0 pr-2">{{ field.name }}</span>
       <div class="flex items-center gap-0.5 flex-shrink-0">
         <button
-          class="p-1 hover:bg-gray-200 rounded text-gray-400 hover:text-gray-700 transition-colors"
+          class="p-1 hover:bg-blue-100 rounded text-ink-subtle hover:text-ink transition-colors"
           title="Configure widget"
           @click.stop="emit('configure', field.id)"
         >
@@ -52,7 +52,7 @@ const variantClass = computed(() => ({
           </svg>
         </button>
         <button
-          class="p-1 hover:bg-red-100 rounded text-gray-400 hover:text-red-600 transition-colors"
+          class="p-1 hover:bg-red-100 rounded text-ink-subtle hover:text-red-600 transition-colors"
           title="Remove widget"
           @click.stop="emit('remove', field.id)"
         >
@@ -69,7 +69,7 @@ const variantClass = computed(() => ({
         v-if="showLabel && labelPosition !== 'hidden' && !editMode"
         class="flex-shrink-0 px-4 pt-3 pb-1"
       >
-        <span class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 leading-none">
+        <span class="text-[11px] font-semibold uppercase tracking-widest text-ink-subtle leading-none">
           {{ field.name }}
         </span>
       </div>

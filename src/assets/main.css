@@ -1,28 +1,36 @@
-/* GridStack base must precede @tailwind so @import ordering is valid */
 @import 'gridstack/dist/gridstack.min.css';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Smooth GridStack transitions */
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    @apply bg-surface-page text-ink;
+  }
+}
+
+/* ── GridStack overrides ─────────────────────────────────── */
 .grid-stack-item-content {
-  @apply rounded-lg overflow-hidden;
+  border-radius: 0.75rem;
+  overflow: hidden;
 }
 
 .grid-stack .grid-stack-placeholder > .placeholder-content {
-  @apply rounded-lg border-2 border-dashed border-brand-300 bg-brand-50;
+  border-radius: 0.75rem;
+  background-color: theme('colors.blue.50');
+  border: 2px dashed theme('colors.blue.300');
 }
 
-/* Widget drag handle cursor */
 .widget-toolbar {
   cursor: grab;
 }
 .widget-toolbar:active {
   cursor: grabbing;
-}
-
-/* Ensure grid builder has minimum height */
-.grid-stack {
-  min-height: 300px;
 }

@@ -239,11 +239,11 @@ watch(
 
     <!-- Sidebar: available fields -->
     <aside class="w-52 flex-shrink-0 flex flex-col gap-2 sticky top-4 max-h-[calc(100vh-120px)] overflow-y-auto pb-4">
-      <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 px-1">Fields</h3>
+      <h3 class="text-xs font-semibold uppercase tracking-wider text-ink-muted px-1">Fields</h3>
 
       <div
         v-if="availableFields.length === 0"
-        class="text-xs text-gray-400 px-2 py-3 text-center border border-dashed border-gray-300 rounded"
+        class="text-xs text-ink-subtle px-2 py-3 text-center border border-dashed border-blue-200 rounded"
       >
         All fields added
       </div>
@@ -251,33 +251,33 @@ watch(
       <div
         v-for="field in availableFields"
         :key="field.id"
-        class="field-chip flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-lg cursor-grab shadow-sm hover:border-brand-400 hover:shadow-md transition-all select-none"
+        class="field-chip flex items-center gap-2 px-3 py-2 bg-white border border-blue-100 rounded-lg cursor-grab shadow-sm hover:border-blue-400 hover:shadow-md transition-all select-none"
         draggable="true"
         :title="`Click or drag to add ${field.name}`"
         @dragstart="onDragStart($event, field.id)"
         @click="addField(field.id)"
       >
-        <span class="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 uppercase font-mono font-medium flex-shrink-0">
+        <span class="text-xs px-1.5 py-0.5 rounded bg-surface-sunken text-ink-muted uppercase font-mono font-medium flex-shrink-0">
           {{ field.type.slice(0, 3) }}
         </span>
-        <span class="text-sm text-gray-800 truncate">{{ field.name }}</span>
-        <svg class="w-3.5 h-3.5 text-gray-400 ml-auto flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <span class="text-sm text-ink truncate">{{ field.name }}</span>
+        <svg class="w-3.5 h-3.5 text-ink-subtle ml-auto flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
         </svg>
       </div>
 
       <!-- In-layout listing -->
-      <div v-if="layout.length" class="mt-2 pt-3 border-t border-gray-200">
-        <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-400 px-1 mb-1.5">In layout</h4>
+      <div v-if="layout.length" class="mt-2 pt-3 border-t border-blue-100">
+        <h4 class="text-xs font-semibold uppercase tracking-wider text-ink-subtle px-1 mb-1.5">In layout</h4>
         <div
           v-for="item in layout"
           :key="item.fieldId"
-          class="flex items-center gap-2 px-2 py-1.5 rounded text-xs text-gray-600 hover:bg-gray-50 group"
+          class="flex items-center gap-2 px-2 py-1.5 rounded text-xs text-ink-muted hover:bg-blue-50 group"
         >
-          <span class="w-2 h-2 rounded-full bg-brand-400 flex-shrink-0" />
+          <span class="w-2 h-2 rounded-full bg-blue-400 flex-shrink-0" />
           <span class="truncate flex-1">{{ getField(item.fieldId)?.name }}</span>
           <button
-            class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all"
+            class="opacity-0 group-hover:opacity-100 text-ink-subtle hover:text-red-500 transition-all"
             @click="removeField(item.fieldId)"
           >
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -292,7 +292,7 @@ watch(
     <div class="flex-1 min-w-0 overflow-x-hidden">
       <div
         ref="containerRef"
-        class="grid-stack w-full bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 min-h-[420px]"
+        class="grid-stack w-full bg-surface-sunken rounded-xl border-2 border-dashed border-blue-200 min-h-[420px]"
       />
     </div>
 

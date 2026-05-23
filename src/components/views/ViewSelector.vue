@@ -30,15 +30,15 @@ function select(id: number) {
 <template>
   <div ref="rootRef" class="view-selector relative">
     <button
-      class="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
+      class="flex items-center gap-2 px-3 py-2 bg-white/10 border border-blue-700 rounded-lg text-sm hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
       @click="open = !open"
     >
-      <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg class="w-4 h-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
       </svg>
-      <span class="font-medium text-gray-900">{{ active?.name ?? 'Select view' }}</span>
-      <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <span class="font-medium text-white">{{ active?.name ?? 'Select view' }}</span>
+      <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
       </svg>
     </button>
@@ -53,23 +53,23 @@ function select(id: number) {
     >
       <div
         v-if="open"
-        class="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-200 rounded-xl shadow-lg z-30 py-1 overflow-hidden"
+        class="absolute top-full left-0 mt-1 w-64 bg-white border border-blue-100 rounded-xl shadow-lg z-30 py-1 overflow-hidden"
       >
-        <div v-if="views.length === 0" class="px-4 py-3 text-sm text-gray-400 text-center">
+        <div v-if="views.length === 0" class="px-4 py-3 text-sm text-ink-subtle text-center">
           No views yet
         </div>
 
         <button
           v-for="view in views"
           :key="view.id"
-          class="w-full flex items-center justify-between px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors text-left group"
-          :class="{ 'bg-brand-50 text-brand-700 font-medium': view.id === active?.id }"
+          class="w-full flex items-center justify-between px-4 py-2.5 text-sm hover:bg-blue-50 transition-colors text-left group"
+          :class="{ 'bg-blue-50 text-blue-700 font-medium': view.id === active?.id }"
           @click="select(view.id)"
         >
           <span class="truncate">{{ view.name }}</span>
           <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 flex-shrink-0">
             <button
-              class="p-1 hover:bg-gray-200 rounded text-gray-500"
+              class="p-1 hover:bg-blue-100 rounded text-ink-muted"
               title="Edit view"
               @click.stop="emit('edit', view.id)"
             >
