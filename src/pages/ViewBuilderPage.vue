@@ -270,7 +270,7 @@ function goBack() {
         Class not found
       </div>
 
-      <div v-else class="max-w-screen-xl mx-auto px-4 sm:px-6 py-6 h-full">
+      <div v-else class="max-w-screen-xl mx-auto px-4 sm:px-6 py-6">
         <GridBuilder
           v-if="!previewMode"
           :key="builderKey"

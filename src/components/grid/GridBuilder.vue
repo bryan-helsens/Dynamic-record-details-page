@@ -85,7 +85,7 @@ function initGrid() {
       cellHeight: props.view.rowHeight ?? 60,
       animate: true,
       float: false,
-      margin: 8,
+      margin: 10,
       resizable: { handles: 'se,sw,ne,nw,e,w,s' },
     },
     containerRef.value,
@@ -235,10 +235,10 @@ watch(
 </script>
 
 <template>
-  <div class="grid-builder flex gap-4 h-full">
+  <div class="grid-builder flex gap-4 items-start">
 
     <!-- Sidebar: available fields -->
-    <aside class="w-56 flex-shrink-0 flex flex-col gap-2 overflow-y-auto">
+    <aside class="w-52 flex-shrink-0 flex flex-col gap-2 sticky top-4 max-h-[calc(100vh-120px)] overflow-y-auto pb-4">
       <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 px-1">Fields</h3>
 
       <div
@@ -288,11 +288,11 @@ watch(
       </div>
     </aside>
 
-    <!-- Grid canvas -->
-    <div class="flex-1 min-w-0 flex flex-col">
+    <!-- Grid canvas: overflow-x hidden so widgets can't escape right edge -->
+    <div class="flex-1 min-w-0 overflow-x-hidden">
       <div
         ref="containerRef"
-        class="grid-stack flex-1 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 min-h-[400px] p-2"
+        class="grid-stack w-full bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 min-h-[420px]"
       />
     </div>
 

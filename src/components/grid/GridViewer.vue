@@ -1,8 +1,10 @@
 <script setup lang="ts">
 /**
- * Read-only view renderer.
- * Uses CSS Grid for pixel-perfect layout matching the saved view config.
- * No external library needed for static display — avoids GridStack DOM timing issues.
+ * Read-only view renderer using CSS Grid.
+ * Mirrors the GridStack coordinate system exactly:
+ *   - grid-template-columns: N equal columns
+ *   - grid-template-rows: explicit fixed-height rows so y positions are respected
+ *   - Each item placed via grid-column / grid-row spanning
  */
 import { computed } from 'vue'
 import type { View, PimClass, RecordValues } from '@/types'
@@ -16,33 +18,36 @@ const props = defineProps<{
 
 const columns = computed(() => props.view.columns ?? 12)
 const rowHeight = computed(() => props.view.rowHeight ?? 60)
-const gap = 8
+const gap = 10
+
+const visibleItems = computed(() =>
+  props.view.layout.filter((item) => getField(item.fieldId)),
+)
+
+// Total rows needed = max(y + h) across all items
+const totalRows = computed(() => {
+  if (!visibleItems.value.length) return 1
+  return Math.max(...visibleItems.value.map((i) => i.y + i.h))
+})
 
 function getField(fieldId: number) {
   return props.pimClass.fields.find((f) => f.id === fieldId)
 }
 
-/**
- * Build a flat CSS Grid style string for the container.
- * Each layout item is placed using grid-column / grid-row.
- */
 function itemStyle(item: { x: number; y: number; w: number; h: number }) {
   return {
     gridColumn: `${item.x + 1} / span ${item.w}`,
     gridRow: `${item.y + 1} / span ${item.h}`,
-    height: `${item.h * rowHeight.value + (item.h - 1) * gap}px`,
   }
 }
 
 const gridStyle = computed(() => ({
   display: 'grid',
   gridTemplateColumns: `repeat(${columns.value}, 1fr)`,
+  // Explicit row heights so items at y>0 aren't ignored
+  gridTemplateRows: `repeat(${totalRows.value}, ${rowHeight.value}px)`,
   gap: `${gap}px`,
 }))
-
-const visibleItems = computed(() =>
-  props.view.layout.filter((item) => getField(item.fieldId)),
-)
 </script>
 
 <template>

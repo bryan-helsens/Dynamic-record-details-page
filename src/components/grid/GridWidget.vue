@@ -15,14 +15,17 @@ const emit = defineEmits<{
   (e: 'configure', fieldId: number): void
 }>()
 
+const isImage = computed(() => props.field.type === 'image')
 const variant = computed(() => props.layoutItem.displayOptions?.variant ?? 'default')
+const showLabel = computed(() => props.layoutItem.displayOptions?.showLabel !== false)
+const labelPosition = computed(() => props.layoutItem.displayOptions?.labelPosition ?? 'top')
 
 const variantClass = computed(() => ({
-  'default':   'bg-white border border-gray-200 shadow-sm',
-  'card':      'bg-white border border-gray-200 shadow-md',
-  'highlight': 'bg-brand-50 border border-brand-200 shadow-sm',
-  'minimal':   'bg-transparent border-0 shadow-none',
-}[variant.value]))
+  default:   'bg-white border border-gray-200 shadow-sm',
+  card:      'bg-white border border-gray-200 shadow-md',
+  highlight: 'bg-brand-50 border border-brand-200 shadow-sm',
+  minimal:   'bg-transparent border-0 shadow-none',
+}[variant.value] ?? 'bg-white border border-gray-200 shadow-sm'))
 </script>
 
 <template>
@@ -30,12 +33,12 @@ const variantClass = computed(() => ({
     class="grid-widget h-full flex flex-col rounded-xl overflow-hidden transition-shadow"
     :class="[variantClass, editMode ? 'ring-2 ring-brand-300 ring-offset-1 hover:shadow-md' : '']"
   >
-    <!-- Edit mode drag handle toolbar -->
+    <!-- Edit mode drag handle -->
     <div
       v-if="editMode"
-      class="widget-toolbar flex items-center justify-between px-3 py-1.5 bg-gray-50 border-b border-gray-200 cursor-grab active:cursor-grabbing select-none"
+      class="widget-toolbar flex-shrink-0 flex items-center justify-between px-3 py-1.5 bg-gray-50 border-b border-gray-200 cursor-grab active:cursor-grabbing select-none"
     >
-      <span class="text-xs font-medium text-gray-500 truncate">{{ field.name }}</span>
+      <span class="text-xs font-medium text-gray-500 truncate min-w-0 pr-2">{{ field.name }}</span>
       <div class="flex items-center gap-0.5 flex-shrink-0">
         <button
           class="p-1 hover:bg-gray-200 rounded text-gray-400 hover:text-gray-700 transition-colors"
@@ -60,11 +63,27 @@ const variantClass = computed(() => ({
       </div>
     </div>
 
-    <!-- Content -->
-    <div
-      class="widget-content flex-1 min-h-0 overflow-hidden"
-      :class="field.type === 'image' ? 'p-0' : 'px-4 py-3'"
-    >
+    <!-- Image fields: label pinned at top with padding, image fills the rest -->
+    <template v-if="isImage">
+      <div
+        v-if="showLabel && labelPosition !== 'hidden' && !editMode"
+        class="flex-shrink-0 px-4 pt-3 pb-1"
+      >
+        <span class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 leading-none">
+          {{ field.name }}
+        </span>
+      </div>
+      <div class="flex-1 min-h-0 overflow-hidden">
+        <FieldRenderer
+          :field="field"
+          :value="value"
+          :display-options="{ ...layoutItem.displayOptions, showLabel: false }"
+        />
+      </div>
+    </template>
+
+    <!-- All other fields: padded content with label + value -->
+    <div v-else class="flex-1 min-h-0 overflow-hidden px-4 py-3">
       <FieldRenderer
         :field="field"
         :value="value"
