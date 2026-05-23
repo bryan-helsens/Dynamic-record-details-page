@@ -1,0 +1,28 @@
+/* GridStack base must precede @tailwind so @import ordering is valid */
+@import 'gridstack/dist/gridstack.min.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Smooth GridStack transitions */
+.grid-stack-item-content {
+  @apply rounded-lg overflow-hidden;
+}
+
+.grid-stack .grid-stack-placeholder > .placeholder-content {
+  @apply rounded-lg border-2 border-dashed border-brand-300 bg-brand-50;
+}
+
+/* Widget drag handle cursor */
+.widget-toolbar {
+  cursor: grab;
+}
+.widget-toolbar:active {
+  cursor: grabbing;
+}
+
+/* Ensure grid builder has minimum height */
+.grid-stack {
+  min-height: 300px;
+}
