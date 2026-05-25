@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Field } from '@/types'
+import MultipleEditor from './MultipleEditor.vue'
 
 const props = defineProps<{ field: Field; value: unknown }>()
 const emit = defineEmits<{ (e: 'update:value', v: unknown): void }>()
@@ -102,6 +103,14 @@ function toggleMulti(opt: string) {
       />
       <span class="text-sm text-ink-muted font-mono">{{ value || '—' }}</span>
     </div>
+
+    <!-- multiple -->
+    <MultipleEditor
+      v-else-if="field.type === 'multiple'"
+      :field="field"
+      :value="value"
+      @update:value="emit('update:value', $event)"
+    />
 
     <!-- image / fallback (URL input) -->
     <input

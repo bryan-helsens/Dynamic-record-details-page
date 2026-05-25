@@ -91,7 +91,7 @@ const ringClass = computed(() => {
         </span>
         <span v-if="field.required" class="text-amber-500 text-xs leading-none ml-0.5">*</span>
       </div>
-      <div class="flex-1 min-h-0 overflow-hidden px-4 pb-3">
+      <div class="flex-1 min-h-0 overflow-y-auto px-4 pb-3">
         <FieldEditor
           :field="field"
           :value="value"
@@ -122,7 +122,7 @@ const ringClass = computed(() => {
       </template>
 
       <!-- All other fields -->
-      <div v-else class="flex-1 min-h-0 overflow-hidden px-4 py-3">
+      <div v-else class="flex-1 min-h-0 overflow-y-auto px-4 py-3">
         <FieldRenderer
           :field="field"
           :value="value"

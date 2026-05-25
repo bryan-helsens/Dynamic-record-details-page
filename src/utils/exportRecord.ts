@@ -1,4 +1,4 @@
-import type { PimClass, PimRecord, View, LayoutItem } from '@/types'
+import type { PimClass, PimRecord, View, LayoutItem, Field } from '@/types'
 
 function esc(str: string): string {
   return str
@@ -16,9 +16,31 @@ function fmtDate(val: string): string {
   }
 }
 
-function renderValue(type: string, value: unknown): string {
+function renderMultiple(value: unknown, refClass: PimClass | undefined): string {
+  if (!Array.isArray(value) || value.length === 0) return '<span style="color:#9CA3AF">—</span>'
+  if (!refClass) return '<span style="color:#9CA3AF">—</span>'
+  const rows = value as Record<string, unknown>[]
+  const cols = refClass.fields
+  const headerCells = cols.map((f: Field) =>
+    `<th style="text-align:left;padding:6px 12px 6px 0;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;border-bottom:1px solid #D4ECF9;white-space:nowrap">${esc(f.name)}</th>`,
+  ).join('')
+  const bodyRows = rows.map((block) => {
+    const cells = cols.map((f: Field) =>
+      `<td style="padding:7px 12px 7px 0;font-size:13px;color:#374151;border-bottom:1px solid #EEF7FD;vertical-align:top">${esc(String(block[String(f.id)] ?? '—'))}</td>`,
+    ).join('')
+    return `<tr>${cells}</tr>`
+  }).join('')
+  return `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse"><thead><tr>${headerCells}</tr></thead><tbody>${bodyRows}</tbody></table></div>`
+}
+
+function renderValue(type: string, value: unknown, allClasses?: PimClass[], referencedClassId?: number): string {
   if (value === null || value === undefined || value === '') {
     return '<span style="color:#9CA3AF">—</span>'
+  }
+
+  if (type === 'multiple') {
+    const refClass = allClasses?.find((c) => c.id === referencedClassId)
+    return renderMultiple(value, refClass)
   }
 
   switch (type) {
@@ -78,7 +100,7 @@ function renderValue(type: string, value: unknown): string {
   }
 }
 
-function renderWidget(item: LayoutItem, field: { name: string; type: string }, value: unknown): string {
+function renderWidget(item: LayoutItem, field: { name: string; type: string; referencedClassId?: number }, value: unknown, allClasses?: PimClass[]): string {
   const opts = item.displayOptions ?? {}
   const showLabel = opts.showLabel !== false && opts.labelPosition !== 'hidden'
   const labelPos = opts.labelPosition ?? 'top'
@@ -99,7 +121,7 @@ function renderWidget(item: LayoutItem, field: { name: string; type: string }, v
   if (field.type === 'image') {
     return `<div style="${variantStyle};border-radius:12px;overflow:hidden;height:100%;display:flex;flex-direction:column">`
       + (showLabel ? `<div style="padding:10px 14px 4px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF">${esc(field.name)}</div>` : '')
-      + `<div style="flex:1;min-height:0;overflow:hidden">${renderValue(field.type, value)}</div>`
+      + `<div style="flex:1;min-height:0;overflow:hidden">${renderValue(field.type, value, allClasses, field.referencedClassId)}</div>`
       + `</div>`
   }
 
@@ -107,17 +129,17 @@ function renderWidget(item: LayoutItem, field: { name: string; type: string }, v
   if (labelPos === 'left' && showLabel) {
     return `<div style="${variantStyle};border-radius:12px;padding:10px 14px;height:100%;display:flex;align-items:center;gap:12px;overflow:hidden;font-size:${fontSize}">`
       + `<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;white-space:nowrap;flex-shrink:0">${esc(field.name)}</div>`
-      + `<div style="flex:1;overflow:hidden">${renderValue(field.type, value)}</div>`
+      + `<div style="flex:1;overflow:hidden">${renderValue(field.type, value, allClasses, field.referencedClassId)}</div>`
       + `</div>`
   }
 
   return `<div style="${variantStyle};border-radius:12px;padding:12px 14px;height:100%;overflow:hidden;font-size:${fontSize}">`
     + labelHtml
-    + `<div>${renderValue(field.type, value)}</div>`
+    + `<div>${renderValue(field.type, value, allClasses, field.referencedClassId)}</div>`
     + `</div>`
 }
 
-export function generateRecordHtml(record: PimRecord, pimClass: PimClass, view: View): string {
+export function generateRecordHtml(record: PimRecord, pimClass: PimClass, view: View, allClasses?: PimClass[]): string {
   const columns = view.columns ?? 12
   const rowHeight = view.rowHeight ?? 60
   const gap = 10
@@ -136,7 +158,7 @@ export function generateRecordHtml(record: PimRecord, pimClass: PimClass, view: 
     const field = pimClass.fields.find((f) => f.id === item.fieldId)!
     const value = record.values[String(item.fieldId)]
     return `      <div style="grid-column:${item.x + 1}/span ${item.w};grid-row:${item.y + 1}/span ${item.h}">`
-      + renderWidget(item, field, value)
+      + renderWidget(item, field, value, allClasses)
       + `</div>`
   }).join('\n')
 
@@ -179,8 +201,8 @@ ${widgetsHtml}
 </html>`
 }
 
-export function downloadRecordHtml(record: PimRecord, pimClass: PimClass, view: View): void {
-  const html = generateRecordHtml(record, pimClass, view)
+export function downloadRecordHtml(record: PimRecord, pimClass: PimClass, view: View, allClasses?: PimClass[]): void {
+  const html = generateRecordHtml(record, pimClass, view, allClasses)
   const title = String(record.values[String(pimClass.fields[0]?.id)] ?? `record-${record.id}`)
   const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
   const filename = `${pimClass.name.toLowerCase()}-${slug}-${new Date().toISOString().slice(0, 10)}.html`

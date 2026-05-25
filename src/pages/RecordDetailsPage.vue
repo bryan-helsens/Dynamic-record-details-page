@@ -184,7 +184,7 @@ function handleEditView(view: View) {
               <button
                 class="flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
                 title="Export as HTML"
-                @click="downloadRecordHtml(record!, pimClass!, activeView!)"
+                @click="downloadRecordHtml(record!, pimClass!, activeView!, classStore.classes)"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

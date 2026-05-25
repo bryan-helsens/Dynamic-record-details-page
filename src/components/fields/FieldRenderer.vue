@@ -22,6 +22,7 @@ const componentMap: Record<string, () => Promise<Component>> = {
   url: () => import('./UrlField.vue'),
   email: () => import('./UrlField.vue'),
   color: () => import('./ColorField.vue'),
+  multiple: () => import('./MultipleField.vue'),
 }
 
 const FieldComponent = computed(() =>
@@ -64,6 +65,7 @@ const fontSizeClass = computed(() => {
         :value="value"
         :type="field.type"
         :options="field.options"
+        :referenced-class-id="field.referencedClassId"
       />
     </div>
   </div>

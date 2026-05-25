@@ -14,6 +14,7 @@ export type FieldType =
   | 'url'
   | 'email'
   | 'color'
+  | 'multiple'
 
 export interface Field {
   id: number
@@ -22,6 +23,7 @@ export interface Field {
   required?: boolean
   options?: string[]          // for select / multiselect
   relationClassId?: number    // for relation type
+  referencedClassId?: number  // for multiple type — defines block shape
   meta?: Record<string, unknown>
 }
 

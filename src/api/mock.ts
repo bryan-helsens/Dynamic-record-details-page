@@ -23,6 +23,7 @@ const CLASSES: PimClass[] = [
       { id: 18, name: 'Tags', type: 'multiselect', options: ['New', 'Sale', 'Featured', 'Bestseller'] },
       { id: 19, name: 'Product Page', type: 'url' },
       { id: 20, name: 'Brand Color', type: 'color' },
+      { id: 50, name: 'Specifications', type: 'multiple', referencedClassId: 3 },
     ],
   },
   {
@@ -35,6 +36,15 @@ const CLASSES: PimClass[] = [
       { id: 24, name: 'Active', type: 'boolean' },
       { id: 25, name: 'Joined', type: 'date' },
       { id: 26, name: 'Notes', type: 'textarea' },
+    ],
+  },
+  {
+    id: 3,
+    name: 'Spec',
+    fields: [
+      { id: 51, name: 'Category', type: 'text' },
+      { id: 52, name: 'Property', type: 'text' },
+      { id: 53, name: 'Value', type: 'text' },
     ],
   },
 ]
@@ -54,6 +64,17 @@ const RECORDS: PimRecord[] = [
       '18': ['New', 'Featured'],
       '19': 'https://apple.com/iphone-15-pro',
       '20': '#1d1d1f',
+      '50': [
+        { '51': 'Display',  '52': 'Screen Size',  '53': '6.1 inch' },
+        { '51': 'Display',  '52': 'Resolution',   '53': '2556 × 1179' },
+        { '51': 'Display',  '52': 'Technology',   '53': 'Super Retina XDR OLED' },
+        { '51': 'Chip',     '52': 'Processor',    '53': 'A17 Pro' },
+        { '51': 'Chip',     '52': 'GPU',          '53': '6-core GPU' },
+        { '51': 'Battery',  '52': 'Capacity',     '53': '3274 mAh' },
+        { '51': 'Battery',  '52': 'Video Playback','53': 'Up to 23 hours' },
+        { '51': 'Camera',   '52': 'Main',         '53': '48 MP, ƒ/1.78' },
+        { '51': 'Camera',   '52': 'Telephoto',    '53': '12 MP, 3× optical zoom' },
+      ],
     },
   },
   {
@@ -103,6 +124,7 @@ const VIEWS: View[] = [
       { fieldId: 15, x: 3, y: 5, w: 3, h: 2 },
       { fieldId: 17, x: 6, y: 5, w: 3, h: 2 },
       { fieldId: 18, x: 9, y: 5, w: 3, h: 2 },
+      { fieldId: 50, x: 0, y: 7, w: 12, h: 5, displayOptions: { showLabel: true, labelPosition: 'top' } },
     ],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
