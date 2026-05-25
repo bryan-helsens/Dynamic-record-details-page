@@ -16,21 +16,46 @@ function fmtDate(val: string): string {
   }
 }
 
-function renderMultiple(value: unknown, refClass: PimClass | undefined): string {
+function renderMultiple(value: unknown, refClass: PimClass | undefined, allClasses?: PimClass[], depth = 0): string {
   if (!Array.isArray(value) || value.length === 0) return '<span style="color:#9CA3AF">—</span>'
   if (!refClass) return '<span style="color:#9CA3AF">—</span>'
   const rows = value as Record<string, unknown>[]
   const cols = refClass.fields
+  const indent = depth * 16
+  const bgColors = ['#EEF7FD', '#E0F0FA', '#D4E9F7', '#C8E2F4']
+  const borderColors = ['#A9D9F3', '#7EC5EC', '#4EB0E5', '#0095DA']
+  const bg = bgColors[Math.min(depth, bgColors.length - 1)]
+  const border = borderColors[Math.min(depth, borderColors.length - 1)]
+
   const headerCells = cols.map((f: Field) =>
-    `<th style="text-align:left;padding:6px 12px 6px 0;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;border-bottom:1px solid #D4ECF9;white-space:nowrap">${esc(f.name)}</th>`,
+    `<th style="text-align:left;padding:6px 12px 6px 0;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;border-bottom:1px solid ${border}30;white-space:nowrap">${esc(f.name)}</th>`,
   ).join('')
+
   const bodyRows = rows.map((block) => {
-    const cells = cols.map((f: Field) =>
-      `<td style="padding:7px 12px 7px 0;font-size:13px;color:#374151;border-bottom:1px solid #EEF7FD;vertical-align:top">${esc(String(block[String(f.id)] ?? '—'))}</td>`,
-    ).join('')
+    const cells = cols.map((f: Field) => {
+      let cellContent: string
+      if (f.type === 'multiple') {
+        const nestedRefClass = allClasses?.find((c) => c.id === f.referencedClassId)
+        const nestedVal = block[String(f.id)]
+        const count = Array.isArray(nestedVal) ? nestedVal.length : 0
+        if (count === 0) {
+          cellContent = '<span style="color:#9CA3AF;font-size:12px">—</span>'
+        } else {
+          const nestedTable = renderMultiple(nestedVal, nestedRefClass, allClasses, depth + 1)
+          cellContent = `<details style="margin:0"><summary style="cursor:pointer;font-size:12px;font-weight:600;color:#0076AE;list-style:none;display:inline-flex;align-items:center;gap:4px">`
+            + `<svg width="10" height="10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>`
+            + `${count} row${count !== 1 ? 's' : ''}</summary>`
+            + `<div style="margin-top:6px;padding:8px;background:${bg};border-left:2px solid ${border};border-radius:0 6px 6px 0">${nestedTable}</div></details>`
+        }
+      } else {
+        cellContent = esc(String(block[String(f.id)] ?? '—'))
+      }
+      return `<td style="padding:7px 12px 7px 0;font-size:13px;color:#374151;border-bottom:1px solid #EEF7FD;vertical-align:top">${cellContent}</td>`
+    }).join('')
     return `<tr>${cells}</tr>`
   }).join('')
-  return `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse"><thead><tr>${headerCells}</tr></thead><tbody>${bodyRows}</tbody></table></div>`
+
+  return `<div style="overflow-x:auto;margin-left:${indent}px"><table style="width:100%;border-collapse:collapse"><thead><tr>${headerCells}</tr></thead><tbody>${bodyRows}</tbody></table></div>`
 }
 
 function renderValue(type: string, value: unknown, allClasses?: PimClass[], referencedClassId?: number): string {
@@ -40,7 +65,7 @@ function renderValue(type: string, value: unknown, allClasses?: PimClass[], refe
 
   if (type === 'multiple') {
     const refClass = allClasses?.find((c) => c.id === referencedClassId)
-    return renderMultiple(value, refClass)
+    return renderMultiple(value, refClass, allClasses, 0)
   }
 
   switch (type) {

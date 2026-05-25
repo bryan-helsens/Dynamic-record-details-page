@@ -45,6 +45,24 @@ const CLASSES: PimClass[] = [
       { id: 51, name: 'Category', type: 'text' },
       { id: 52, name: 'Property', type: 'text' },
       { id: 53, name: 'Value', type: 'text' },
+      { id: 54, name: 'Sources', type: 'multiple', referencedClassId: 4 },
+    ],
+  },
+  {
+    id: 4,
+    name: 'SpecSource',
+    fields: [
+      { id: 61, name: 'Source', type: 'text' },
+      { id: 62, name: 'Detail', type: 'text' },
+      { id: 63, name: 'Measurements', type: 'multiple', referencedClassId: 5 },
+    ],
+  },
+  {
+    id: 5,
+    name: 'Measurement',
+    fields: [
+      { id: 71, name: 'Method', type: 'text' },
+      { id: 72, name: 'Result', type: 'text' },
     ],
   },
 ]
@@ -65,15 +83,54 @@ const RECORDS: PimRecord[] = [
       '19': 'https://apple.com/iphone-15-pro',
       '20': '#1d1d1f',
       '50': [
-        { '51': 'Display',  '52': 'Screen Size',  '53': '6.1 inch' },
-        { '51': 'Display',  '52': 'Resolution',   '53': '2556 × 1179' },
-        { '51': 'Display',  '52': 'Technology',   '53': 'Super Retina XDR OLED' },
-        { '51': 'Chip',     '52': 'Processor',    '53': 'A17 Pro' },
-        { '51': 'Chip',     '52': 'GPU',          '53': '6-core GPU' },
-        { '51': 'Battery',  '52': 'Capacity',     '53': '3274 mAh' },
-        { '51': 'Battery',  '52': 'Video Playback','53': 'Up to 23 hours' },
-        { '51': 'Camera',   '52': 'Main',         '53': '48 MP, ƒ/1.78' },
-        { '51': 'Camera',   '52': 'Telephoto',    '53': '12 MP, 3× optical zoom' },
+        {
+          '51': 'Display', '52': 'Screen Size', '53': '6.1 inch',
+          '54': [
+            { '61': 'Apple', '62': 'Official spec page', '63': [{ '71': 'Physical ruler', '72': '154 mm diagonal' }, { '71': 'Pixel calc', '72': '460 ppi density' }] },
+            { '61': 'iFixit', '62': 'Panel teardown', '63': [{ '71': 'Caliper', '72': '153.8 mm' }] },
+          ],
+        },
+        {
+          '51': 'Display', '52': 'Resolution', '53': '2556 × 1179',
+          '54': [
+            { '61': 'Apple', '62': 'Official spec page', '63': [] },
+            { '61': 'DisplayMate', '62': 'Lab analysis A+', '63': [{ '71': 'Spectrophotometer', '72': '2000 nits peak' }, { '71': 'Colorimeter', '72': 'P3 wide color' }] },
+          ],
+        },
+        {
+          '51': 'Display', '52': 'Technology', '53': 'Super Retina XDR OLED',
+          '54': [],
+        },
+        {
+          '51': 'Chip', '52': 'Processor', '53': 'A17 Pro',
+          '54': [
+            { '61': 'Apple', '62': 'Official press release', '63': [{ '71': 'TSMC 3nm', '72': '19B transistors' }] },
+            { '61': 'AnandTech', '62': 'Benchmark suite', '63': [{ '71': 'Geekbench 6 SC', '72': '2914' }, { '71': 'Geekbench 6 MC', '72': '7219' }] },
+          ],
+        },
+        {
+          '51': 'Chip', '52': 'GPU', '53': '6-core GPU',
+          '54': [{ '61': 'Apple', '62': 'Official spec page', '63': [] }],
+        },
+        {
+          '51': 'Battery', '52': 'Capacity', '53': '3274 mAh',
+          '54': [{ '61': 'iFixit', '62': 'Teardown measurement', '63': [{ '71': 'Multimeter', '72': '3.79 V nominal' }] }],
+        },
+        {
+          '51': 'Battery', '52': 'Video Playback', '53': 'Up to 23 hours',
+          '54': [{ '61': 'Apple', '62': 'Internal testing conditions', '63': [] }],
+        },
+        {
+          '51': 'Camera', '52': 'Main', '53': '48 MP, ƒ/1.78',
+          '54': [
+            { '61': 'Apple', '62': 'Official spec page', '63': [] },
+            { '61': 'DxOMark', '62': 'Camera benchmark score 156', '63': [{ '71': 'Photo score', '72': '158' }, { '71': 'Video score', '72': '156' }, { '71': 'Zoom score', '72': '153' }] },
+          ],
+        },
+        {
+          '51': 'Camera', '52': 'Telephoto', '53': '12 MP, 3× optical zoom',
+          '54': [{ '61': 'Apple', '62': 'Official spec page', '63': [] }],
+        },
       ],
     },
   },
