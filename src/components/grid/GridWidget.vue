@@ -3,6 +3,8 @@ import { computed } from 'vue'
 import type { Field, LayoutItem } from '@/types'
 import FieldRenderer from '@/components/fields/FieldRenderer.vue'
 import FieldEditor from '@/components/fields/FieldEditor.vue'
+import MultipleField from '@/components/fields/MultipleField.vue'
+import MultipleEditor from '@/components/fields/MultipleEditor.vue'
 
 const props = defineProps<{
   field: Field
@@ -19,6 +21,7 @@ const emit = defineEmits<{
 }>()
 
 const isImage = computed(() => props.field.type === 'image')
+const isMultiple = computed(() => props.field.type === 'multiple')
 const variant = computed(() => props.layoutItem.displayOptions?.variant ?? 'default')
 const showLabel = computed(() => props.layoutItem.displayOptions?.showLabel !== false)
 const labelPosition = computed(() => props.layoutItem.displayOptions?.labelPosition ?? 'top')
@@ -61,6 +64,7 @@ const ringClass = computed(() => {
       <span class="text-xs font-medium text-ink-muted truncate min-w-0 pr-2">{{ field.name }}</span>
       <div class="flex items-center gap-0.5 flex-shrink-0">
         <button
+          type="button"
           class="p-1 hover:bg-blue-100 rounded text-ink-subtle hover:text-ink transition-colors"
           title="Configure widget"
           @click.stop="emit('configure', field.id)"
@@ -72,6 +76,7 @@ const ringClass = computed(() => {
           </svg>
         </button>
         <button
+          type="button"
           class="p-1 hover:bg-red-100 rounded text-ink-subtle hover:text-red-600 transition-colors"
           title="Remove widget"
           @click.stop="emit('remove', field.id)"
@@ -83,7 +88,7 @@ const ringClass = computed(() => {
       </div>
     </div>
 
-    <!-- Record edit mode: label + FieldEditor -->
+    <!-- Record edit mode -->
     <template v-else-if="recordEditable">
       <div class="flex-shrink-0 px-4 pt-2.5 pb-0.5 flex items-center gap-1">
         <span class="text-[11px] font-semibold uppercase tracking-widest text-ink-subtle leading-none">
@@ -91,7 +96,15 @@ const ringClass = computed(() => {
         </span>
         <span v-if="field.required" class="text-amber-500 text-xs leading-none ml-0.5">*</span>
       </div>
-      <div class="flex-1 min-h-0 overflow-y-auto px-4 pb-3">
+      <!-- Multiple: bypass FieldEditor, render MultipleEditor directly with its own scroll -->
+      <div v-if="isMultiple" class="flex-1 min-h-0 overflow-y-auto px-4 pb-3">
+        <MultipleEditor
+          :field="field"
+          :value="value"
+          @update:value="emit('update:value', { fieldId: field.id, value: $event })"
+        />
+      </div>
+      <div v-else class="flex-1 min-h-0 overflow-y-auto px-4 pb-3">
         <FieldEditor
           :field="field"
           :value="value"
@@ -102,7 +115,7 @@ const ringClass = computed(() => {
 
     <!-- Normal view mode -->
     <template v-else>
-      <!-- Image fields: label pinned at top, image fills the rest -->
+      <!-- Image fields -->
       <template v-if="isImage">
         <div
           v-if="showLabel && labelPosition !== 'hidden'"
@@ -117,6 +130,24 @@ const ringClass = computed(() => {
             :field="field"
             :value="value"
             :display-options="{ ...layoutItem.displayOptions, showLabel: false }"
+          />
+        </div>
+      </template>
+
+      <!-- Multiple: bypass FieldRenderer so overflow-hidden doesn't trap the table -->
+      <template v-else-if="isMultiple">
+        <div
+          v-if="showLabel && labelPosition !== 'hidden'"
+          class="flex-shrink-0 px-4 pt-3 pb-1"
+        >
+          <span class="text-[11px] font-semibold uppercase tracking-widest text-ink-subtle leading-none">
+            {{ field.name }}
+          </span>
+        </div>
+        <div class="flex-1 min-h-0 overflow-y-auto px-4 pb-3">
+          <MultipleField
+            :value="value"
+            :referenced-class-id="field.referencedClassId"
           />
         </div>
       </template>
